@@ -6,7 +6,11 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno inicializarSistema(int maxCiudades) {
-        return Retorno.noImplementada();
+        if (maxCiudades <= 5) {
+            return Retorno.error1("El máximo de ciudades debe ser mayor a 5");
+        }
+        //TODO crear grafo y 4 abb
+        return Retorno.ok();
     }
 
     @Override
