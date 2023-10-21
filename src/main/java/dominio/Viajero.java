@@ -5,7 +5,7 @@ import interfaz.TipoViajero;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Viajero {
+public class Viajero implements Comparable <Viajero> {
     private String cedula;
     private  String nombre;
     private int edad;
@@ -33,4 +33,13 @@ public class Viajero {
         return Objects.equals(cedula, viajero.cedula);
     }
 
+    @Override
+    public int compareTo(Viajero o) {
+        return this.cedula.compareTo(o.cedula);
+    }
+
+    @Override
+    public String toString() {
+        return cedula + ";" + nombre + ";" + edad + ";" + tipo.getTexto();
+    }
 }

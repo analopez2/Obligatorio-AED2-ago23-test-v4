@@ -11,8 +11,12 @@ public class Ciudad {
         this.nombre = nombre;
     }
 
-    public boolean isValid() {
+    public boolean isValidCodigo() {
         return this.codigo.length() >= 5 && this.codigo.matches("[A-Z0-9]+");
+    }
+
+    public boolean isValid() {
+        return this.nombre!=null && !this.nombre.isEmpty() && this.codigo!=null && !this.codigo.isEmpty();
     }
 
     public String getCodigo() {
