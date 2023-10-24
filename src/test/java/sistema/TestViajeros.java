@@ -99,61 +99,61 @@ public class TestViajeros {
         TestViajeroDato viajeroValido = new TestViajeroDato("3.211.322-3", "Algun nombre", 23, TipoViajero.CASUAL);
         agregueUnViajero(s, viajeroValido);
         //cuando
-        TestViajeroDato viajeroCedulaInvalida = new TestViajeroDato("algoquenosepareceaunacedula", null, 23, TipoViajero.CASUAL);
+        TestViajeroDato viajeroCedulaInvalida = new TestViajeroDato("algoquenosepareceaunacedula", "Un nombre", 23, TipoViajero.CASUAL);
         Retorno resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("2.323222-3", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("2.323222-3", "Un nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("2#323#222-3", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("2#323#222-3", "Un nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "En las regexp el . significa cualquier caracter");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("40.232.222-2", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("40.232.222-2", "Un nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("0.232.222-2", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("0.232.222-2", "Un nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("332.222-", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("032.222-2", "Un nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("2.3.2.1.2", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("2.3.2.1.2", "Otro nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("ba2.342.233-2", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("ba2.342.233-2", "Otro nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("2.342.233-2222", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("2.342.233-2222", "El nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("2.3\422.233-2222", "Algun nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("2.3\422.233-2222", "Nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");

@@ -2,6 +2,7 @@ package sistema.auxiliares;
 
 import interfaz.TipoViajero;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -47,11 +48,15 @@ public class TestViajeroDato {
     public static TestViajeroDato fromString(String resultado){
         try {
             String[] partes = resultado.split(";");
-            return new TestViajeroDato(partes[0],partes[1],Integer.parseInt(partes[2]),TipoViajero.valueOf(partes[3]));
+            return new TestViajeroDato(partes[0],partes[1],Integer.parseInt(partes[2]),obtenerTipoViajero(partes[3]));
         }catch (Exception e){
             Logger.getLogger(TestViajeroDato.class.getCanonicalName()).warning("No pude leer el viajero: '"+resultado+"'");
             return null;
         }
+    }
+
+    private static TipoViajero obtenerTipoViajero(String texto) {
+        return Arrays.stream(TipoViajero.values()).filter(v->v.getTexto().equalsIgnoreCase(texto)).findFirst().orElse(null);
     }
 
     public TestViajeroDato copia() {

@@ -339,6 +339,11 @@ public class TestRegistrosMapa {
         AuxAsserciones.checkearError6(resultado, "El id esta repetido");
         resultado = agregoUnaConexion(s, MVD, PARIS, 1, 23, 22, TipoConexion.RUTA_AEREA);
         AuxAsserciones.checkearError6(resultado, "El id esta repetido");
+
+        resultado = agregoUnaConexion(s, PARIS, MVD, 2, 52, 11, TipoConexion.RUTA_AEREA);
+
+        AuxAsserciones.checkearOk(resultado, "Recuerden que al ser un multigrafo pueden haber varias conexiones" +
+                "que van entre el mismo par de vertices, solo que las diferenciamos por su id");
     }
 
 
