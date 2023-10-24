@@ -3,6 +3,7 @@ package estructuras.ABB;
 public class ABB<T extends Comparable<T>> {
 
     private Nodo<T> raiz;
+    private int iteraciones;
 
     public void insertar(T dato) {
         if (this.raiz == null) {
@@ -48,10 +49,12 @@ public class ABB<T extends Comparable<T>> {
     }
 
     public T obtener(T dato) {
+        this.iteraciones = 0;
         return obtener(raiz, dato);
     }
 
     private T obtener(Nodo<T> nodo, T dato) {
+        this.iteraciones+= 1;
         if (nodo == null) {
             return null;
         } else if (nodo.getDato().equals(dato)) {
@@ -89,6 +92,10 @@ public class ABB<T extends Comparable<T>> {
         }
     }
 
+    public int getIteraciones() {
+        return iteraciones;
+    }
+    
     private class Nodo<T> {
         private T dato;
         private Nodo<T> der;

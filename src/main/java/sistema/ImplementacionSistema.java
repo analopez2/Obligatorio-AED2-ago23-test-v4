@@ -9,10 +9,8 @@ import interfaz.*;
 public class ImplementacionSistema implements Sistema {
 
     private Grafo grafoCiudades;
-    private ABB viajeros;
-    private ABB viajerosPremium;
-    private ABB viajerosStandar;
-    private ABB viajerosCasual;
+    private ABB<Viajero> viajeros;
+    private final ABB<Viajero>[] viajerosTipo = new ABB[3];
     @Override
     public Retorno inicializarSistema(int maxCiudades) {
         if (maxCiudades <= 5) {
@@ -20,11 +18,10 @@ public class ImplementacionSistema implements Sistema {
         }
 
         this.grafoCiudades = new Grafo(maxCiudades, true);
-        this.viajeros = new ABB();
-        this.viajerosPremium = new ABB();
-        this.viajerosStandar = new ABB();
-        this.viajerosCasual = new ABB();
-
+        this.viajeros = new ABB<>();
+        this.viajerosTipo[TipoViajero.ESTANDAR.getIndice()] = new ABB<>();
+        this.viajerosTipo[TipoViajero.PREMIUM.getIndice()] = new ABB<>();
+        this.viajerosTipo[TipoViajero.CASUAL.getIndice()] = new ABB<>();
         return Retorno.ok();
     }
 
@@ -41,12 +38,7 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error3("Ya existe un viajero con esa cedula");
         }
         this.viajeros.insertar(v);
-
-        switch (tipo) {
-            case TipoViajero.PREMIUM -> viajerosPremium.insertar(v);
-            case TipoViajero.ESTANDAR -> viajerosStandar.insertar(v);
-            default -> viajerosCasual.insertar(v);
-        }
+        this.viajerosTipo[tipo.getIndice()].insertar(v);
 
         return Retorno.ok();
     }
@@ -57,14 +49,13 @@ public class ImplementacionSistema implements Sistema {
         if (buscado.validarCedula()){
             return Retorno.error1("Cedula invalida");
         }
-        Viajero v = (Viajero) this.viajeros.obtener(buscado);
+        Viajero v = this.viajeros.obtener(buscado);
+        int pasadas = this.viajeros.getIteraciones();
 
         if (v == null){
             return Retorno.error2("No existe viajero registrado con dicha cedula");
         }
-        //TODO revisar como se hacia para obtener la cantidad de recorridas explico
-        // en la clase de la seana del 16/10
-        return Retorno.ok(0,v.toString());
+        return Retorno.ok(pasadas,v.toString());
     }
 
     @Override
@@ -89,11 +80,7 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error1("El tipo es obligatorio");
         }
 
-        switch (tipo) {
-            case TipoViajero.PREMIUM -> viajerosPremium.listarAsc();
-            case TipoViajero.ESTANDAR -> viajerosStandar.listarAsc();
-            default -> viajerosCasual.listarAsc();
-        }
+        this.viajerosTipo[tipo.getIndice()].listarAsc();
         return Retorno.ok();
     }
 

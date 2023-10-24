@@ -35,6 +35,7 @@ public class Viajero implements Comparable <Viajero> {
 
     @Override
     public int compareTo(Viajero o) {
+
         return this.cedula.compareTo(o.cedula);
     }
 
