@@ -5,9 +5,9 @@ import interfaz.TipoViajero;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Viajero implements Comparable <Viajero> {
+public class Viajero implements Comparable<Viajero> {
     private String cedula;
-    private  String nombre;
+    private String nombre;
     private int edad;
     private TipoViajero tipo;
     private int cedulaNumerica;
@@ -17,15 +17,17 @@ public class Viajero implements Comparable <Viajero> {
         this.nombre = nombre;
         this.edad = edad;
         this.tipo = tipo;
-        if (isValid() && validarCedula()) {
-            this.cedulaNumerica = Integer.parseInt(cedula.replaceAll("[.]|[^0-9]\\d$", ""));
+        if (validarCedula()) {
+            String c = cedula.replaceAll("[.]|[^0-9]\\d$", "");
+            this.cedulaNumerica = Integer.parseInt(c);
         }
     }
+
     public boolean isValid() {
-    return this.cedula != null && this.nombre != null && !this.nombre.isEmpty() && !this.cedula.isEmpty() && this.edad != 0 && this.tipo!=null;
+        return this.cedula != null && this.nombre != null && !this.nombre.isEmpty() && !this.cedula.isEmpty() && this.edad != 0 && this.tipo != null;
     }
 
-    public boolean validarCedula (){
+    public boolean validarCedula() {
         return this.cedula != null && !this.cedula.isEmpty() && Pattern.matches("^[1-9][.][0-9]{3}[.][0-9]{3}-[0-9]|[1-9]{3}[.][0-9]{3}-[0-9]$", this.cedula);
     }
 
