@@ -10,19 +10,23 @@ public class Viajero implements Comparable <Viajero> {
     private  String nombre;
     private int edad;
     private TipoViajero tipo;
+    private int cedulaNumerica;
 
     public Viajero(String cedula, String nombre, int edad, TipoViajero tipo) {
         this.cedula = cedula;
         this.nombre = nombre;
         this.edad = edad;
         this.tipo = tipo;
+        if (isValid() && validarCedula()) {
+            this.cedulaNumerica = Integer.parseInt(cedula.replaceAll("[.]|[^0-9]\\d$", ""));
+        }
     }
     public boolean isValid() {
-        return this.cedula != null && this.nombre != null && this.edad != 0 && this.tipo!=null;
+    return this.cedula != null && this.nombre != null && !this.nombre.isEmpty() && !this.cedula.isEmpty() && this.edad != 0 && this.tipo!=null;
     }
 
     public boolean validarCedula (){
-        return Pattern.matches("^([1-9][.])?[0-9]{3}[.][0-9]{3}-[0-9]$", this.cedula);
+        return this.cedula != null && !this.cedula.isEmpty() && Pattern.matches("^[1-9][.][0-9]{3}[.][0-9]{3}-[0-9]|[1-9]{3}[.][0-9]{3}-[0-9]$", this.cedula);
     }
 
     @Override
@@ -35,12 +39,11 @@ public class Viajero implements Comparable <Viajero> {
 
     @Override
     public int compareTo(Viajero o) {
-
-        return this.cedula.compareTo(o.cedula);
+        return Integer.compare(this.cedulaNumerica, o.cedulaNumerica);
     }
 
     @Override
     public String toString() {
-        return cedula + ";" + nombre + ";" + edad + ";" + tipo.getTexto();
+        return cedula + ";" + nombre + ";" + edad + ";" + tipo;
     }
 }

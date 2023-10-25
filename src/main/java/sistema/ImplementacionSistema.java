@@ -46,7 +46,7 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno buscarViajero(String cedula) {
         Viajero buscado = new Viajero(cedula,"",0,TipoViajero.PREMIUM);
-        if (buscado.validarCedula()){
+        if (!buscado.validarCedula()){
             return Retorno.error1("Cedula invalida");
         }
         Viajero v = this.viajeros.obtener(buscado);
@@ -60,18 +60,14 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno listarViajerosAscendente() {
-        viajeros.listarAsc();
-        //TODO verificar formato en el que se listan porque tiene que tener una barra recta
-        // entre los elementos
-        return Retorno.ok();
+        String res = viajeros.listarAsc();
+        return Retorno.ok(res);
     }
 
     @Override
     public Retorno listarViajerosDescendente() {
-        viajeros.listarAsc();
-        //TODO verificar formato en el que se listan porque tiene que tener una barra recta
-        // entre los elementos
-        return Retorno.ok();
+        String res = viajeros.listarDes();
+        return Retorno.ok(res);
     }
 
     @Override
@@ -80,8 +76,8 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error1("El tipo es obligatorio");
         }
 
-        this.viajerosTipo[tipo.getIndice()].listarAsc();
-        return Retorno.ok();
+        String res = this.viajerosTipo[tipo.getIndice()].listarAsc();
+        return Retorno.ok(res);
     }
 
     @Override
@@ -90,10 +86,10 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error1("No se pueden ingresar mas ciudades");
         }
         Ciudad c = new Ciudad(codigo, nombre);
-        if(c.isValid()){
+        if(!c.isValid()){
             return Retorno.error2("Los datos no pueden ser vacion o nulos");
         }
-        if(c.isValidCodigo()){
+        if(!c.isValidCodigo()){
             return Retorno.error3("Codigo invalido");
         }
         if (grafoCiudades.existeVertice(c)){

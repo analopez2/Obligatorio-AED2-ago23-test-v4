@@ -54,12 +54,12 @@ public class ABB<T extends Comparable<T>> {
     }
 
     private T obtener(Nodo<T> nodo, T dato) {
-        this.iteraciones+= 1;
         if (nodo == null) {
             return null;
         } else if (nodo.getDato().equals(dato)) {
             return nodo.getDato();
         } else {
+            this.iteraciones+= 1;
             if (dato.compareTo(nodo.getDato()) > 0) {
                 return obtener(nodo.getDer(), dato);
             } else {
@@ -68,28 +68,32 @@ public class ABB<T extends Comparable<T>> {
         }
     }
 
-    public void listarAsc() {
-        listarAsc(raiz);
+    public String listarAsc() {
+        String resultado = listarAsc(raiz, "");
+        return resultado.isEmpty() ? resultado : resultado.substring(0, resultado.length() - 1);
     }
 
-    private void listarAsc(Nodo<T> nodo) {
+    private String listarAsc(Nodo<T> nodo, String resultado) {
         if (nodo != null) {
-            listarAsc(nodo.getIzq());
-            System.out.println(nodo.getDato());
-            listarAsc(nodo.getDer());
+            resultado = listarAsc(nodo.getIzq(), resultado);
+            resultado += nodo.getDato()+ "|";
+            resultado = listarAsc(nodo.getDer(), resultado);
         }
+        return resultado;
     }
 
-    public void listarDes() {
-        listarDes(raiz);
+    public String listarDes() {
+        String resultado = listarDes(raiz, "");
+        return resultado.isEmpty() ? resultado : resultado.substring(0, resultado.length() - 1);
     }
 
-    private void listarDes(Nodo<T> nodo) {
+    private String listarDes(Nodo<T> nodo, String resultado) {
         if (nodo != null) {
-            listarDes(nodo.getDer());
-            System.out.println(nodo.getDato());
-            listarDes(nodo.getIzq());
+            resultado = listarDes(nodo.getDer(), resultado);
+            resultado += nodo.getDato()+ "|";
+            resultado = listarDes(nodo.getIzq(), resultado);
         }
+        return resultado;
     }
 
     public int getIteraciones() {

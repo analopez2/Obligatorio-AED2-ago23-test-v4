@@ -55,7 +55,7 @@ public class Grafo {
 
     private int obtenerPos(Ciudad vert) {
         for (int i = 0; i < tope; i++) {
-            if(vertices[i].equals(vert)){
+            if(vertices[i] != null  && vertices[i].equals(vert)){
                 return i;
             }
         }
