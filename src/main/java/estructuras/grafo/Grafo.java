@@ -93,16 +93,19 @@ public class Grafo {
         matAdy[posOrigen][posDestino].agregarConexion(con);
     }
 
+    public void actualizarConexion(Ciudad origen, Ciudad destino, Conexion con) {
+        int posOrigen = obtenerPos(origen);
+        int posDestino = obtenerPos(destino);
+        matAdy[posOrigen][posDestino].actualizarConexion(con);
+    }
+
     // existeCiudad(origen) && existeCiudad(destino)
-    public Arista buscarConexion(Ciudad origen, Ciudad destino) {
+    public boolean existeConexion(Ciudad origen, Ciudad destino, Conexion con) {
         int posOrigen = obtenerPos(origen);
         int posDestino = obtenerPos(destino);
 
-        Arista ar = matAdy[posOrigen][posDestino];
-        if (ar.isExiste()) {
-            return ar;
-        }
-        return null;
+        Arista conexiones = matAdy[posOrigen][posDestino];
+        return conexiones.isExiste() && conexiones.existeConexion(con);
     }
 
     // existeCiudad(origen) && existeCiudad(destino) && existeConexion

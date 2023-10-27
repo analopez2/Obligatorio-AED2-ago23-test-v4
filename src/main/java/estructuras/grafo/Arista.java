@@ -40,6 +40,10 @@ public class Arista {
         buscada.setTiempo(con.getTiempo());
     }
 
+    public boolean existeConexion(Conexion con){
+        return this.conexiones.existe(con);
+    }
+
     public void viajeCostoMinimo(){
         //Aplanar las conexiones y ver cual es la de menor tiempo
         //utilizar Djkstra
