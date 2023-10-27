@@ -1,9 +1,11 @@
 package sistema;
 
 import dominio.Ciudad;
+import dominio.Conexion;
 import dominio.Viajero;
 import estructuras.ABB.ABB;
 import estructuras.grafo.Grafo;
+import estructuras.grafo.Arista;
 import interfaz.*;
 
 public class ImplementacionSistema implements Sistema {
@@ -11,6 +13,7 @@ public class ImplementacionSistema implements Sistema {
     private Grafo grafoCiudades;
     private ABB<Viajero> viajeros;
     private final ABB<Viajero>[] viajerosTipo = new ABB[3];
+
     @Override
     public Retorno inicializarSistema(int maxCiudades) {
         if (maxCiudades <= 5) {
@@ -45,17 +48,17 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno buscarViajero(String cedula) {
-        Viajero buscado = new Viajero(cedula,"",0,TipoViajero.PREMIUM);
-        if (!buscado.validarCedula()){
+        Viajero buscado = new Viajero(cedula, "", 0, TipoViajero.PREMIUM);
+        if (!buscado.validarCedula()) {
             return Retorno.error1("Cedula invalida");
         }
         Viajero v = this.viajeros.obtener(buscado);
         int pasadas = this.viajeros.getIteraciones();
 
-        if (v == null){
+        if (v == null) {
             return Retorno.error2("No existe viajero registrado con dicha cedula");
         }
-        return Retorno.ok(pasadas,v.toString());
+        return Retorno.ok(pasadas, v.toString());
     }
 
     @Override
@@ -82,40 +85,118 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno registrarCiudad(String codigo, String nombre) {
-        if(grafoCiudades.esLleno()){
+        if (grafoCiudades.esLleno()) {
             return Retorno.error1("No se pueden ingresar mas ciudades");
         }
         Ciudad c = new Ciudad(codigo, nombre);
-        if(!c.isValid()){
+        if (!c.isValid()) {
             return Retorno.error2("Los datos no pueden ser vacion o nulos");
         }
-        if(!c.isValidCodigo()){
+        if (!c.isValidCodigo()) {
             return Retorno.error3("Codigo invalido");
         }
-        if (grafoCiudades.existeVertice(c)){
+        if (grafoCiudades.existeCiudad(c)) {
             return Retorno.error4("Ya existe una ciudad con ese codigo");
         }
-        this.grafoCiudades.agregarVertice(c);
+        this.grafoCiudades.agregarCiudad(c);
         return Retorno.ok();
     }
 
     @Override
     public Retorno registrarConexion(String codigoCiudadOrigen, String codigoCiudadDestino, int identificadorConexion, double costo, double tiempo, TipoConexion tipo) {
-        return Retorno.noImplementada();
+        return processConnexion(codigoCiudadOrigen, codigoCiudadDestino, identificadorConexion, costo, tiempo, tipo, false);
     }
 
     @Override
     public Retorno actualizarConexion(String codigoCiudadOrigen, String codigoCiudadDestino, int identificadorConexion, double costo, double tiempo, TipoConexion tipo) {
-        return Retorno.noImplementada();
+        return processConnexion(codigoCiudadOrigen, codigoCiudadDestino, identificadorConexion, costo, tiempo, tipo, true);
     }
+
+    private Retorno processConnexion(String codigoCiudadOrigen, String codigoCiudadDestino, int identificadorConexion, double costo, double tiempo, TipoConexion tipo, boolean actualizar){
+        Conexion c = new Conexion(codigoCiudadOrigen, codigoCiudadDestino, identificadorConexion, costo, tiempo, tipo);
+        if (!c.validarDoubles()) {
+            return Retorno.error1("Costo y tiempo no pueden ser menores a 0");
+        }
+
+        if (!c.validarStringsAndType()) {
+            return Retorno.error2("Codigos de ciudades y tipo de conexión son obligatorios");
+        }
+
+        Ciudad ciudadOrigen = new Ciudad(codigoCiudadOrigen, "");
+        Ciudad ciudadDestino = new Ciudad(codigoCiudadDestino, "");
+
+        if (!ciudadOrigen.isValidCodigo() || !ciudadDestino.isValidCodigo()) {
+            return Retorno.error3("Codigos de ciudades inválidos");
+        }
+
+        if (!this.grafoCiudades.existeCiudad(ciudadOrigen)) {
+            return Retorno.error4("No existe la cidudad de origen");
+        }
+
+        if (!this.grafoCiudades.existeCiudad(ciudadDestino)) {
+            return Retorno.error5("No existe la cidudad de destino");
+        }
+
+        Arista conexionBuscada = this.grafoCiudades.buscarConexion(ciudadOrigen, ciudadDestino);
+
+        if (actualizar) {
+            if (conexionBuscada == null || !conexionBuscada.getConexiones().existe(c)) {
+                return Retorno.error6("No existe una conexión entre las ciudades con el mismo identificador");
+            }
+            conexionBuscada.actualizarConexion(c);
+        } else {
+            if (conexionBuscada != null && conexionBuscada.getConexiones().existe(c)) {
+                return Retorno.error6("Ya existe una conexión entre las ciudades con el mismo identificador");
+            }
+            this.grafoCiudades.agregarConexion(ciudadOrigen, ciudadDestino, c);
+        }
+        return Retorno.ok();
+    }
+
 
     @Override
     public Retorno listadoCiudadesCantTrasbordos(String codigo, int cantidad) {
+        if (cantidad < 0) {
+            return Retorno.error1("La cantidad de trasbordos no puede ser menor a 0");
+        }
+        if (codigo == null || codigo.isEmpty()) {
+            return Retorno.error2("El código no puede ser nulo");
+        }
+
+        Ciudad c = new Ciudad(codigo, "");
+        if (!c.isValidCodigo()) {
+            return Retorno.error3("El código de ciudad no es válido");
+        }
+
+        if (!this.grafoCiudades.existeCiudad(c)) {
+            return Retorno.error4("La ciudad no existe en el sistema");
+        }
+
         return Retorno.noImplementada();
     }
 
     @Override
     public Retorno viajeCostoMinimo(String codigoCiudadOrigen, String codigoCiudadDestino) {
+        if (codigoCiudadDestino == null || codigoCiudadOrigen == null || codigoCiudadOrigen.isEmpty() || codigoCiudadDestino.isEmpty()){
+            return Retorno.error1("Codigos de ciudades son obligatorios");
+        }
+
+        Ciudad origen = new Ciudad(codigoCiudadOrigen, "");
+        Ciudad destino = new Ciudad(codigoCiudadDestino, "");
+        if (!origen.isValidCodigo() || !destino.isValidCodigo()){
+            return Retorno.error2("Códigos de ciudad deben ser válidos");
+        }
+
+        if(!this.grafoCiudades.existeCiudad(origen)) {
+            return Retorno.error4("No existe la ciudad de origen");
+        }
+
+        if(!this.grafoCiudades.existeCiudad(destino)) {
+            return Retorno.error5("No existe la ciudad de destino");
+        }
+
+        //TODO si no hay camino error 3
+
         return Retorno.noImplementada();
     }
 }

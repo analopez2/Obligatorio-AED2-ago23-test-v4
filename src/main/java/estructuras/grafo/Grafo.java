@@ -1,6 +1,7 @@
 package estructuras.grafo;
 
 import dominio.Ciudad;
+import dominio.Conexion;
 import estructuras.cola.Cola;
 import estructuras.lista.Lista;
 import estructuras.lista.ListaImp;
@@ -10,13 +11,13 @@ public class Grafo {
     //Definir atributos
     private int cantidad;
     private int tope;
-    private Ciudad[] vertices;
+    private Ciudad[] ciudades;
     private Arista[][] matAdy;
 
-    public Grafo(int cantMaxDeVertices, boolean esDirigido) {
+    public Grafo(int cantMaxCiudades, boolean esDirigido) {
         cantidad = 0;
-        tope = cantMaxDeVertices;
-        vertices = new Ciudad[tope];
+        tope = cantMaxCiudades;
+        ciudades = new Ciudad[tope];
         matAdy = new Arista[tope][tope];
         if (esDirigido) {
             for (int i = 0; i < tope; i++) {
@@ -46,33 +47,33 @@ public class Grafo {
     // PRE: !esLleno()
     private int obtenerPosLibre() {
         for (int i = 0; i < tope; i++) {
-            if(vertices[i] == null){
+            if(ciudades[i] == null){
                 return i;
             }
         }
         return -1;
     }
 
-    private int obtenerPos(Ciudad vert) {
+    private int obtenerPos(Ciudad ciudad) {
         for (int i = 0; i < tope; i++) {
-            if(vertices[i] != null  && vertices[i].equals(vert)){
+            if(ciudades[i] != null  && ciudades[i].equals(ciudad)){
                 return i;
             }
         }
         return -1;
     }
 
-    // PRE: !esLleno && !existeVertice
-    public void agregarVertice(Ciudad vert) {
+    // PRE: !esLleno && !existeCiudad
+    public void agregarCiudad(Ciudad ciudad) {
         int pos = obtenerPosLibre();
-        vertices[pos] = vert;
+        ciudades[pos] = ciudad;
         cantidad++;
     }
 
-    // PRE: existeVertice
-    public void borrarVertice(Ciudad vert) {
-        int pos = obtenerPos(vert);
-        vertices[pos] = null;
+    // PRE: existeCiudad
+    public void borrarCiudad(Ciudad ciudad) {
+        int pos = obtenerPos(ciudad);
+        ciudades[pos] = null;
         for (int k = 0; k < tope; k++) {
             matAdy[pos][k].setExiste(false);
             matAdy[k][pos].setExiste(false);
@@ -80,65 +81,70 @@ public class Grafo {
         cantidad--;
     }
 
-    public boolean existeVertice(Ciudad vert) {
-        return obtenerPos(vert) != -1;
+    public boolean existeCiudad(Ciudad ciudad) {
+        return obtenerPos(ciudad) != -1;
     }
 
-    // existeVertice(origen) && existeVertice(destino) && !existeArista
-    public void agregarArista(Ciudad origen, Ciudad destino, int peso) {
+    // existeCiudad(origen) && existeCiudad(destino) && !existeConexion
+    public void agregarConexion(Ciudad origen, Ciudad destino, Conexion con) {
         int posOrigen = obtenerPos(origen);
         int posDestino = obtenerPos(destino);
         matAdy[posOrigen][posDestino].setExiste(true);
-        matAdy[posOrigen][posDestino].setPeso(peso);
+        matAdy[posOrigen][posDestino].agregarConexion(con);
     }
 
-    // existeVertice(origen) && existeVertice(destino)
-    public boolean existerArista(Ciudad origen, Ciudad destino) {
+    // existeCiudad(origen) && existeCiudad(destino)
+    public Arista buscarConexion(Ciudad origen, Ciudad destino) {
         int posOrigen = obtenerPos(origen);
         int posDestino = obtenerPos(destino);
-        return matAdy[posOrigen][posDestino].isExiste();
+
+        Arista ar = matAdy[posOrigen][posDestino];
+        if (ar.isExiste()) {
+            return ar;
+        }
+        return null;
     }
 
-    // existeVertice(origen) && existeVertice(destino) && existeArista
-    public void borrarArista(Ciudad origen, Ciudad destino) {
+    // existeCiudad(origen) && existeCiudad(destino) && existeConexion
+    public void borrarConexion(Ciudad origen, Ciudad destino) {
         int posOrigen = obtenerPos(origen);
         int posDestino = obtenerPos(destino);
         matAdy[posOrigen][posDestino].setExiste(false);
     }
 
-    public Lista<Ciudad> verticesAdyacentes(Ciudad vert) {
+    public Lista<Ciudad> ciudadesAdyacentes(Ciudad ciudad) {
         Lista<Ciudad> listaDeAdyacentes = new ListaImp<>();
-        int pos = obtenerPos(vert);
+        int pos = obtenerPos(ciudad);
         for (int j = 0; j < tope; j++) {
             if(matAdy[pos][j].isExiste()){
-                listaDeAdyacentes.insertar( vertices[j] );
+                listaDeAdyacentes.insertar( ciudades[j] );
             }
         }
         return listaDeAdyacentes;
     }
 
-    // Pre: existeVertice(vert)
-    public Lista<Ciudad> verticesIncidentes(Ciudad vert) {
+    // Pre: existeCiudad(ciudad)
+    public Lista<Ciudad> ciudadesIncidentes(Ciudad vert) {
         Lista<Ciudad> lista = new ListaImp<>();
         int pos = obtenerPos(vert);
         for (int i = 0; i < tope; i++) {
             if(matAdy[i][pos].isExiste()){
-                lista.insertar( vertices[i] );
+                lista.insertar( ciudades[i] );
             }
         }
         return lista;
     }
 
-    //Pre existeVertice(vert)
-    public void dfs(Ciudad vert){
-        int posInicial = obtenerPos(vert);
-        System.out.println("DFS ; inicio " + vert);
+    //Pre existeCiudad(ciudad)
+    public void dfs(Ciudad ciudad){
+        int posInicial = obtenerPos(ciudad);
+        System.out.println("DFS ; inicio " + ciudad);
         boolean[] visitados = new boolean[tope]; //por defecto todo en false
         dfsRec(posInicial, visitados);
     }
 
     private void dfsRec(int pos, boolean[] visitados){
-        System.out.println( vertices[pos] );
+        System.out.println( ciudades[pos] );
         visitados[pos] = true;
         //obtener los adyacentes no visitados y llamar recursivo
         for (int j = 0; j < tope; j++) {
@@ -157,7 +163,7 @@ public class Grafo {
         visitados[inicio] = true;
         while( !cola.esVacia() ){
             int pos = cola.desencolar();
-            System.out.println( vertices[pos] );
+            System.out.println( ciudades[pos] );
             for (int j = 0; j < tope; j++) {
                 if( matAdy[pos][j].isExiste() && !visitados[j]){
                     cola.encolar(j);
@@ -178,7 +184,7 @@ public class Grafo {
             Tupla tupla = cola.desencolar();
             int pos = tupla.getPos();
             int nivel = tupla.getNivel();
-            System.out.println( vertices[pos] +  " : " + nivel );
+            System.out.println( ciudades[pos] +  " : " + nivel );
             for (int j = 0; j < tope; j++) {
                 if( matAdy[pos][j].isExiste() && !visitados[j]){
                     cola.encolar(new Tupla(j,nivel+1));
