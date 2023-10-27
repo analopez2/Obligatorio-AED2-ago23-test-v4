@@ -172,6 +172,8 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error4("La ciudad no existe en el sistema");
         }
 
+        //Esto es con bfs2 de grafo hay que devolver ordenado
+        //agregar en un abb y retornar una lista de strings
         return Retorno.noImplementada();
     }
 
@@ -196,6 +198,8 @@ public class ImplementacionSistema implements Sistema {
         }
 
         //TODO si no hay camino error 3
+
+        //Esto es con djkstra
 
         return Retorno.noImplementada();
     }
