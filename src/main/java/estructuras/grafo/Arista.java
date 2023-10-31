@@ -2,6 +2,9 @@ package estructuras.grafo;
 
 import dominio.Conexion;
 import estructuras.ABB.ABB;
+import estructuras.lista.Lista;
+
+import java.util.Iterator;
 
 public class Arista {
 
@@ -40,14 +43,29 @@ public class Arista {
         buscada.setTiempo(con.getTiempo());
     }
 
-    public boolean existeConexion(Conexion con){
+    public boolean existeConexion(Conexion con) {
         return this.conexiones.existe(con);
     }
 
-    public void viajeCostoMinimo(){
-        //Aplanar las conexiones y ver cual es la de menor tiempo
-        //utilizar Djkstra
+    public Conexion viajeCostoMinimo() {
+        double tiempoMinimo = Double.MAX_VALUE;
+        Lista<Conexion> conexiones = this.conexiones.aplanarCreciente();
+        Iterator<Conexion> it = conexiones.iterator();
+
+        Conexion conexionMinima = null;
+
+        while (it.hasNext()) {
+            Conexion conexion = it.next();
+            double tiempoConexion = conexion.getTiempo();
+
+            if (tiempoConexion < tiempoMinimo) {
+                tiempoMinimo = tiempoConexion;
+            }
+        }
+
+        return conexionMinima;
     }
+
 }
 
 

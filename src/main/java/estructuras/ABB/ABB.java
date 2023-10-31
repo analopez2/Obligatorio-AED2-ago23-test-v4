@@ -1,5 +1,8 @@
 package estructuras.ABB;
 
+import estructuras.lista.Lista;
+import estructuras.lista.ListaImp;
+
 public class ABB<T extends Comparable<T>> {
 
     private Nodo<T> raiz;
@@ -59,7 +62,7 @@ public class ABB<T extends Comparable<T>> {
         } else if (nodo.getDato().equals(dato)) {
             return nodo.getDato();
         } else {
-            this.iteraciones+= 1;
+            this.iteraciones += 1;
             if (dato.compareTo(nodo.getDato()) > 0) {
                 return obtener(nodo.getDer(), dato);
             } else {
@@ -76,7 +79,7 @@ public class ABB<T extends Comparable<T>> {
     private String listarAsc(Nodo<T> nodo, String resultado) {
         if (nodo != null) {
             resultado = listarAsc(nodo.getIzq(), resultado);
-            resultado += nodo.getDato()+ "|";
+            resultado += nodo.getDato() + "|";
             resultado = listarAsc(nodo.getDer(), resultado);
         }
         return resultado;
@@ -90,16 +93,30 @@ public class ABB<T extends Comparable<T>> {
     private String listarDes(Nodo<T> nodo, String resultado) {
         if (nodo != null) {
             resultado = listarDes(nodo.getDer(), resultado);
-            resultado += nodo.getDato()+ "|";
+            resultado += nodo.getDato() + "|";
             resultado = listarDes(nodo.getIzq(), resultado);
         }
         return resultado;
     }
 
+    public Lista<T> aplanarCreciente() {
+        Lista<T> lista = new ListaImp<>();
+        aplanar(raiz, lista);
+        return lista;
+    }
+
+    private void aplanar(Nodo<T> nodo, Lista<T> lista) {
+        if (nodo != null) {
+            aplanar(nodo.getIzq(), lista);
+            lista.insertar(nodo.getDato());
+            aplanar(nodo.getDer(), lista);
+        }
+    }
+
     public int getIteraciones() {
         return iteraciones;
     }
-    
+
     private class Nodo<T> {
         private T dato;
         private Nodo<T> der;
@@ -137,7 +154,7 @@ public class ABB<T extends Comparable<T>> {
 
         public void setIzq(Nodo<T> izq) {
             this.izq = izq;
-  }
-}
+        }
+    }
 
 }

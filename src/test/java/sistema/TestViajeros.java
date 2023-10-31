@@ -129,7 +129,7 @@ public class TestViajeros {
         checkearError2(resultado, "LA cedula no tiene el formato valido");
 
         //cuando
-        viajeroCedulaInvalida = new TestViajeroDato("032.222-2", "Un nombre", 23, TipoViajero.CASUAL);
+        viajeroCedulaInvalida = new TestViajeroDato("332.222-", "Algun nombre", 23, TipoViajero.CASUAL);
         resultado = agregoElViajero(s, viajeroCedulaInvalida);
         //entonces
         checkearError2(resultado, "LA cedula no tiene el formato valido");

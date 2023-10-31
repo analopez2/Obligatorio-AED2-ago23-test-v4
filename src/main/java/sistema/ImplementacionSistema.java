@@ -196,9 +196,9 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error4("La ciudad no existe en el sistema");
         }
 
-        //Esto es con bfs2 de grafo hay que devolver ordenado
-        //agregar en un abb y retornar una lista de strings
-        return Retorno.noImplementada();
+        String listaCiudades = this.grafoCiudades.listarCiudadesCantTrasbordos(c, cantidad);
+
+        return Retorno.ok(listaCiudades);
     }
 
     @Override
@@ -221,10 +221,11 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error5("No existe la ciudad de destino");
         }
 
-        //TODO si no hay camino error 3
+        String viajeCostoMinimo = this.grafoCiudades.viajeCostoMinimo(origen, destino);
 
-        //Esto es con djkstra
-
-        return Retorno.noImplementada();
+        if (viajeCostoMinimo.isEmpty()) {
+            return Retorno.error3("No existe un camino entre origen y destino");
+        }
+        return Retorno.ok(viajeCostoMinimo);
     }
 }

@@ -32,30 +32,6 @@ public class Conexion implements Comparable<Conexion> {
         return Integer.compare(identificadorConexion, o.identificadorConexion);
     }
 
-    public String getCodigoCiudadOrigen() {
-        return codigoCiudadOrigen;
-    }
-
-    public void setCodigoCiudadOrigen(String codigoCiudadOrigen) {
-        this.codigoCiudadOrigen = codigoCiudadOrigen;
-    }
-
-    public String getGetCodigoCiudadDestino() {
-        return getCodigoCiudadDestino;
-    }
-
-    public void setGetCodigoCiudadDestino(String getCodigoCiudadDestino) {
-        this.getCodigoCiudadDestino = getCodigoCiudadDestino;
-    }
-
-    public int getIdentificadorConexion() {
-        return identificadorConexion;
-    }
-
-    public void setIdentificadorConexion(int identificadorConexion) {
-        this.identificadorConexion = identificadorConexion;
-    }
-
     public double getCosto() {
         return costo;
     }

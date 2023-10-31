@@ -2,6 +2,7 @@ package estructuras.grafo;
 
 import dominio.Ciudad;
 import dominio.Conexion;
+import estructuras.ABB.ABB;
 import estructuras.cola.Cola;
 import estructuras.lista.Lista;
 import estructuras.lista.ListaImp;
@@ -47,7 +48,7 @@ public class Grafo {
     // PRE: !esLleno()
     private int obtenerPosLibre() {
         for (int i = 0; i < tope; i++) {
-            if(ciudades[i] == null){
+            if (ciudades[i] == null) {
                 return i;
             }
         }
@@ -56,7 +57,7 @@ public class Grafo {
 
     private int obtenerPos(Ciudad ciudad) {
         for (int i = 0; i < tope; i++) {
-            if(ciudades[i] != null  && ciudades[i].equals(ciudad)){
+            if (ciudades[i] != null && ciudades[i].equals(ciudad)) {
                 return i;
             }
         }
@@ -119,8 +120,8 @@ public class Grafo {
         Lista<Ciudad> listaDeAdyacentes = new ListaImp<>();
         int pos = obtenerPos(ciudad);
         for (int j = 0; j < tope; j++) {
-            if(matAdy[pos][j].isExiste()){
-                listaDeAdyacentes.insertar( ciudades[j] );
+            if (matAdy[pos][j].isExiste()) {
+                listaDeAdyacentes.insertar(ciudades[j]);
             }
         }
         return listaDeAdyacentes;
@@ -131,70 +132,114 @@ public class Grafo {
         Lista<Ciudad> lista = new ListaImp<>();
         int pos = obtenerPos(vert);
         for (int i = 0; i < tope; i++) {
-            if(matAdy[i][pos].isExiste()){
-                lista.insertar( ciudades[i] );
+            if (matAdy[i][pos].isExiste()) {
+                lista.insertar(ciudades[i]);
             }
         }
         return lista;
     }
 
     //Pre existeCiudad(ciudad)
-    public void dfs(Ciudad ciudad){
+    public void dfs(Ciudad ciudad) {
         int posInicial = obtenerPos(ciudad);
         System.out.println("DFS ; inicio " + ciudad);
         boolean[] visitados = new boolean[tope]; //por defecto todo en false
         dfsRec(posInicial, visitados);
     }
 
-    private void dfsRec(int pos, boolean[] visitados){
-        System.out.println( ciudades[pos] );
+    private void dfsRec(int pos, boolean[] visitados) {
+        System.out.println(ciudades[pos]);
         visitados[pos] = true;
         //obtener los adyacentes no visitados y llamar recursivo
         for (int j = 0; j < tope; j++) {
-            if( matAdy[pos][j].isExiste() && !visitados[j]){
+            if (matAdy[pos][j].isExiste() && !visitados[j]) {
                 dfsRec(j, visitados);
             }
         }
     }
 
-    public void bfs(Ciudad vert){
-        System.out.println("BFS ; inicio " + vert);
-        Cola<Integer> cola = new Cola<>();
-        int inicio = obtenerPos(vert);
-        boolean[] visitados = new boolean[tope];
-        cola.encolar(inicio);
-        visitados[inicio] = true;
-        while( !cola.esVacia() ){
-            int pos = cola.desencolar();
-            System.out.println( ciudades[pos] );
-            for (int j = 0; j < tope; j++) {
-                if( matAdy[pos][j].isExiste() && !visitados[j]){
-                    cola.encolar(j);
-                    visitados[j]=true;
-                }
-            }
-        }
-    }
-
-    public void bfs2(Ciudad vert){
-        System.out.println("BFS ; inicio " + vert);
+    public String listarCiudadesCantTrasbordos(Ciudad ciudad, int cantidad) {
+        ABB<Ciudad> retorno = new ABB<>();
         Cola<Tupla> cola = new Cola<>();
-        int inicio = obtenerPos(vert);
+        int inicio = obtenerPos(ciudad);
         boolean[] visitados = new boolean[tope];
-        cola.encolar(new Tupla(inicio,0));
+        cola.encolar(new Tupla(inicio, 0));
         visitados[inicio] = true;
-        while( !cola.esVacia() ){
+        while (!cola.esVacia()) {
             Tupla tupla = cola.desencolar();
             int pos = tupla.getPos();
             int nivel = tupla.getNivel();
-            System.out.println( ciudades[pos] +  " : " + nivel );
+            if (nivel <= cantidad) {
+                retorno.insertar(ciudades[pos]);
+            }
             for (int j = 0; j < tope; j++) {
-                if( matAdy[pos][j].isExiste() && !visitados[j]){
-                    cola.encolar(new Tupla(j,nivel+1));
-                    visitados[j]=true;
+                if (matAdy[pos][j].isExiste() && !visitados[j]) {
+                    cola.encolar(new Tupla(j, nivel + 1));
+                    visitados[j] = true;
                 }
             }
         }
+        return retorno.listarAsc();
     }
 
+    public String viajeCostoMinimo(Ciudad origen, Ciudad destino) {
+        int posOrigen = obtenerPos(origen);
+        int posDestino = obtenerPos(destino);
+
+        boolean[] visitados = new boolean[tope];
+        Ciudad[] anterior = new Ciudad[tope];
+        double[] tiempos = new double[tope];
+
+        for (int i = 0; i < tope; i++) {
+            anterior[i] = null;
+            tiempos[i] = Double.MAX_VALUE;
+        }
+
+        tiempos[posOrigen] = 0;
+
+        for (int i = 0; i < cantidad; i++) {
+            int pos = obtenerSiguienteNoVisitadoDeMenorCosto(tiempos, visitados);
+
+            if (pos != -1) {
+                visitados[pos] = true;
+                for (int j = 0; j < tope; j++) {
+                    if (matAdy[pos][j].isExiste() && !visitados[j]) {
+                        double nuevoTiempo = tiempos[pos] + matAdy[pos][j].viajeCostoMinimo().getTiempo();
+                        if (nuevoTiempo < tiempos[j]) {
+                            tiempos[j] = nuevoTiempo;
+                            anterior[j] = ciudades[pos];
+                        }
+                    }
+                }
+            }
+
+        }
+
+        int ciudadActual = posDestino;
+        ABB<Ciudad> camino = new ABB<>();
+
+        while (ciudadActual != -1) {
+            camino.insertar(ciudades[ciudadActual]);
+
+            if (ciudadActual == posOrigen) {
+                break;
+            }
+
+            ciudadActual = obtenerPos(anterior[ciudadActual]);
+        }
+
+        return camino.listarAsc();
+    }
+
+    private int obtenerSiguienteNoVisitadoDeMenorCosto(double[] tiempo, boolean[] visitados) {
+        int pos = -1;
+        double min = Double.MIN_VALUE;
+        for (int i = 0; i < tope; i++) {
+            if (!visitados[i] && tiempo[i] < min) {
+                min = tiempo[i];
+                pos = i;
+            }
+        }
+        return pos;
+    }
 }
