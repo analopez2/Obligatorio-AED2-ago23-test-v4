@@ -6,7 +6,6 @@ import dominio.Conexion;
 import dominio.Viajero;
 import estructuras.ABB.ABB;
 import estructuras.grafo.Grafo;
-import estructuras.grafo.Arista;
 import interfaz.*;
 
 public class ImplementacionSistema implements Sistema {

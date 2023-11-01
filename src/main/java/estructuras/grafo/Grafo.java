@@ -232,12 +232,12 @@ public class Grafo {
         return new CaminoTiempo(camino, costos[posDestino]);
     }
 
-    private int obtenerSiguienteNoVisitadoDeMenorTiempo(double[] tiempo, boolean[] visitados) {
+    private int obtenerSiguienteNoVisitadoDeMenorTiempo(double[] tiempos, boolean[] visitados) {
         int pos = -1;
-        double min = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
         for (int i = 0; i < tope; i++) {
-            if (!visitados[i] && tiempo[i] < min) {
-                min = tiempo[i];
+            if (!visitados[i] && tiempos[i] < min) {
+                min = tiempos[i];
                 pos = i;
             }
         }
