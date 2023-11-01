@@ -6,6 +6,7 @@ import estructuras.ABB.ABB;
 import estructuras.cola.Cola;
 import estructuras.lista.Lista;
 import estructuras.lista.ListaImp;
+import interfaz.TipoConexion;
 
 public class Grafo {
 
@@ -189,6 +190,7 @@ public class Grafo {
         boolean[] visitados = new boolean[tope];
         Ciudad[] anterior = new Ciudad[tope];
         double[] tiempos = new double[tope];
+        TipoConexion[] tipoConexiones = new TipoConexion[tope];
 
         for (int i = 0; i < tope; i++) {
             anterior[i] = null;
@@ -208,6 +210,7 @@ public class Grafo {
                         if (nuevoTiempo < tiempos[j]) {
                             tiempos[j] = nuevoTiempo;
                             anterior[j] = ciudades[pos];
+                            tipoConexiones[j] = matAdy[pos][j].viajeCostoMinimo().getTipo();
                         }
                     }
                 }
@@ -221,11 +224,9 @@ public class Grafo {
         while (ciudadActual != -1) {
             camino.insertar(ciudades[ciudadActual]);
 
-            if (ciudadActual == posOrigen) {
-                break;
+            if (ciudadActual != posOrigen) {
+                ciudadActual = obtenerPos(anterior[ciudadActual]);
             }
-
-            ciudadActual = obtenerPos(anterior[ciudadActual]);
         }
 
         return camino.listarAsc();

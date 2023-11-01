@@ -60,6 +60,7 @@ public class Arista {
 
             if (tiempoConexion < tiempoMinimo) {
                 tiempoMinimo = tiempoConexion;
+                conexionMinima = conexion;
             }
         }
 
