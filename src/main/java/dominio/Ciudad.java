@@ -11,6 +11,14 @@ public class Ciudad implements Comparable<Ciudad> {
         this.nombre = nombre;
     }
 
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
     public boolean isValidCodigo() {
         return this.codigo.length() >= 5 && this.codigo.matches("[A-Z0-9]+");
     }
