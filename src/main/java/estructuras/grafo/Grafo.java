@@ -2,11 +2,11 @@ package estructuras.grafo;
 
 import dominio.Ciudad;
 import dominio.Conexion;
+import dominio.CaminoTiempo;
 import estructuras.ABB.ABB;
 import estructuras.cola.Cola;
 import estructuras.lista.Lista;
 import estructuras.lista.ListaImp;
-import interfaz.TipoConexion;
 
 public class Grafo {
 
@@ -183,56 +183,56 @@ public class Grafo {
         return retorno.listarAsc();
     }
 
-    public String viajeCostoMinimo(Ciudad origen, Ciudad destino) {
+    public CaminoTiempo viajeCostoMinimo(Ciudad origen, Ciudad destino) {
         int posOrigen = obtenerPos(origen);
         int posDestino = obtenerPos(destino);
-
+        //Estructuras
         boolean[] visitados = new boolean[tope];
         Ciudad[] anterior = new Ciudad[tope];
-        double[] tiempos = new double[tope];
-        TipoConexion[] tipoConexiones = new TipoConexion[tope];
-
+        double[] costos = new double[tope];
+        String[] conexiones = new String[tope];
+        //Inicializar valores de las estructuras
         for (int i = 0; i < tope; i++) {
-            anterior[i] = null;
-            tiempos[i] = Double.MAX_VALUE;
+            costos[i] = Double.MAX_VALUE;
+            conexiones[i] = "";
         }
 
-        tiempos[posOrigen] = 0;
+        //Definir costo de origen en 0
+        costos[posOrigen] = 0;
 
         for (int i = 0; i < cantidad; i++) {
-            int pos = obtenerSiguienteNoVisitadoDeMenorCosto(tiempos, visitados);
-
+            int pos = obtenerSiguienteNoVisitadoDeMenorTiempo(costos, visitados);
             if (pos != -1) {
                 visitados[pos] = true;
+
                 for (int j = 0; j < tope; j++) {
                     if (matAdy[pos][j].isExiste() && !visitados[j]) {
-                        double nuevoTiempo = tiempos[pos] + matAdy[pos][j].viajeCostoMinimo().getTiempo();
-                        if (nuevoTiempo < tiempos[j]) {
-                            tiempos[j] = nuevoTiempo;
+                        Conexion conexion = matAdy[pos][j].viajeCostoMinimo();
+                        double tiempoNuevo = costos[pos] + conexion.getTiempo();
+                        if (tiempoNuevo < costos[j]) {
+                            costos[j] = tiempoNuevo;
                             anterior[j] = ciudades[pos];
-                            tipoConexiones[j] = matAdy[pos][j].viajeCostoMinimo().getTipo();
+                            conexiones[j] = conexion.getTipo() + "";
                         }
+
                     }
                 }
             }
+        }
+        String camino = "";
+        int pos = posDestino;
 
+        while (anterior[pos] != null) {
+            Ciudad ciudadActual = ciudades[pos];
+            camino = "|" + conexiones[pos] + "|" + ciudadActual.toString() + camino;
+            pos = obtenerPos(anterior[pos]);
         }
 
-        int ciudadActual = posDestino;
-        ABB<Ciudad> camino = new ABB<>();
-
-        while (ciudadActual != -1) {
-            camino.insertar(ciudades[ciudadActual]);
-
-            if (ciudadActual != posOrigen) {
-                ciudadActual = obtenerPos(anterior[ciudadActual]);
-            }
-        }
-
-        return camino.listarAsc();
+        camino = ciudades[posOrigen] + camino;
+        return new CaminoTiempo(camino, costos[posDestino]);
     }
 
-    private int obtenerSiguienteNoVisitadoDeMenorCosto(double[] tiempo, boolean[] visitados) {
+    private int obtenerSiguienteNoVisitadoDeMenorTiempo(double[] tiempo, boolean[] visitados) {
         int pos = -1;
         double min = Double.MIN_VALUE;
         for (int i = 0; i < tope; i++) {

@@ -1,5 +1,6 @@
 package sistema;
 
+import dominio.CaminoTiempo;
 import dominio.Ciudad;
 import dominio.Conexion;
 import dominio.Viajero;
@@ -221,11 +222,11 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error5("No existe la ciudad de destino");
         }
 
-        String viajeCostoMinimo = this.grafoCiudades.viajeCostoMinimo(origen, destino);
+        CaminoTiempo viajeCostoMinimo = this.grafoCiudades.viajeCostoMinimo(origen, destino);
 
-        if (viajeCostoMinimo.isEmpty()) {
+        if (viajeCostoMinimo.getTiempoMinimo() == Double.MAX_VALUE) {
             return Retorno.error3("No existe un camino entre origen y destino");
         }
-        return Retorno.ok(viajeCostoMinimo);
+        return Retorno.ok((int) viajeCostoMinimo.getTiempoMinimo(), viajeCostoMinimo.getCamino());
     }
 }
